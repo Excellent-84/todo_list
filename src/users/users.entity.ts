@@ -17,6 +17,6 @@ export class User {
   password!: string;
 
   @ApiProperty({ example: 'John', description: 'Имя пользователя' })
-  @Column('varchar', { length: 100, nullable: true })
-  name?: string;
+  @Column('varchar', { length: 100, nullable: false })
+  name!: string;
 }
