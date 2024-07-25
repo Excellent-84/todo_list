@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@n
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs'
 import { User } from '../users/users.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +18,7 @@ export class AuthService {
 
   async registration(userDto: CreateUserDto) {
     const condidate = await this.userService.getUserByEmail(userDto.email);
+
     if (condidate) {
       throw new HttpException(
         'Пользователь с таким email уже существует',
@@ -32,14 +33,13 @@ export class AuthService {
 
   private async generateToken(user: User) {
     const payload = { email: user.email, id: user.id };
-    return {
-      token: this.jwtService.sign(payload)
-    };
+    return { token: this.jwtService.sign(payload) };
   }
 
   private async validateUser(userDto: CreateUserDto) {
     const user = await this.userService.getUserByEmail(userDto.email);
     const passwordEquals = await bcrypt.compare(userDto.password, user.password);
+
     if (user && passwordEquals) {
       return user;
     }
