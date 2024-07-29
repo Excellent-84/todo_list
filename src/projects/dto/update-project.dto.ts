@@ -2,11 +2,11 @@ import { IsOptional, IsString } from "class-validator";
 
 export class UpdateProjectDto {
 
-    @IsString()
+    @IsString({ message: 'Должно быть строкой' })
     @IsOptional()
-    name?: string;
+    title?: string;
 
-    @IsString()
+    @IsString({ message: 'Должно быть строкой' })
     @IsOptional()
     description?: string;
 }

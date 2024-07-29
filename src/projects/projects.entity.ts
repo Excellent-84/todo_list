@@ -11,7 +11,7 @@ export class Project {
 
   @ApiProperty({ example: 'Project example', description: 'Название проекта' })
   @Column('varchar', { nullable: false, length: 50 })
-  name!: string;
+  title!: string;
 
   @ApiProperty({ example: 'Description example', description: 'Описание проекта' })
   @Column('varchar', { length: 255 })
@@ -21,6 +21,6 @@ export class Project {
   @CreateDateColumn()
   createAd!: Date;
 
-  @ManyToOne(() => User, user => user.projects)
+  @ManyToOne(() => User, user => user.project)
   user: User;
 }
