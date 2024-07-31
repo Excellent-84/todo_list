@@ -4,7 +4,6 @@ import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './users.entity';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
-import { ValidationPipe } from '../pipes/validation.pipe';
 
 
 @ApiTags('Пользователи')

@@ -4,54 +4,50 @@ import { Project } from './projects.entity';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
+import { ProjectsService } from './projects.service';
+
 
 @ApiTags('Проекты')
+@UseGuards(JwtAuthGuard)
 @Controller('projects')
 export class ProjectsController {
-  projectService: any;
+
+  constructor(private readonly projectService: ProjectsService) {}
 
 	@ApiOperation({ summary: 'Создать проект' })
   @ApiResponse({ status: 201, type: Project })
-  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto, @Req() req): Promise<Project> {
-    const user = req.user;
-    return this.projectService.createProject(createProjectDto, user);
+  async create(@Body() dto: CreateProjectDto, @Req() req): Promise<Project> {
+    return this.projectService.createProject(dto, req.user);
   }
 
 	@ApiOperation({ summary: 'Получить все проекты' })
   @ApiResponse({ status: 200, type: [Project] })
-  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Req() req): Promise<Project[]> {
-    const user = req.user;
-    return this.projectService.findAll(user);
+    return this.projectService.getProjects(req.user);
   }
 
 	@ApiOperation({ summary: 'Получить проект по id' })
   @ApiResponse({ status: 200, type: Project })
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: number, @Req() req): Promise<Project> {
-    const user = req.user;
-    return this.projectService.findOne(id, user);
+    return this.projectService.getOneProject(id, req.user);
   }
 
 	@ApiOperation({ summary: 'Обновить проект' })
   @ApiResponse({ status: 200, type: Project })
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async update(@Param('id') id: number, @Body() updateProjectDto: UpdateProjectDto, @Req() req): Promise<Project> {
-    const user = req.user;
-    return this.projectService.update(id, updateProjectDto, user);
+  async update(
+    @Param('id') id: number, @Body() dto: UpdateProjectDto, @Req() req
+  ): Promise<Project> {
+    return this.projectService.updateProject(id, dto, req.user);
   }
 
 	@ApiOperation({ summary: 'Удалить проект' })
   @ApiResponse({ status: 204, type: Project })
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: number, @Req() req): Promise<void> {
-    const user = req.user;
-    return this.projectService.remove(id, user);
+  async delete(@Param('id') id: number, @Req() req): Promise<void> {
+    return this.projectService.deleteProject(id, req.user);
   }
 }

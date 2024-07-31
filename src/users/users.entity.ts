@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Project } from 'src/projects/projects.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
-  // projects: any;
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @PrimaryGeneratedColumn()
@@ -23,6 +22,5 @@ export class User {
   name?: string;
 
   @OneToMany(() => Project, (project) => project.user)
-  @JoinColumn({ name: 'projectId' })
-  project: Project;
+  projects: Project[];
 }
