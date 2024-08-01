@@ -18,17 +18,10 @@ export class StatusesController {
   @ApiResponse({ status: 201, type: Status })
   @Post()
   async create(
-    @Param('id') id: number, @Body() dto: CreateStatusDto
+    @Param('projectId') projectId: number, @Body() dto: CreateStatusDto
   ): Promise<Status> {
-    return this.statusService.createStatus(dto, id);
+    return this.statusService.createStatus(projectId, dto);
   }
-
-  // @ApiOperation({ summary: 'Создать столбец' })
-  // @ApiResponse({ status: 201, type: ColumnName })
-  // @Post()
-  // async create(@Body() dto: CreateColumnDto, @Req() req): Promise<ColumnName> {
-  //   return this.columnService.createColumn(dto, req.project);
-  // }
 
 	// @ApiOperation({ summary: 'Получить все проекты' })
   // @ApiResponse({ status: 200, type: [Project] })

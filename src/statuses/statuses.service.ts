@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Status } from './statuses.entity';
@@ -11,25 +11,15 @@ export class StatusesService {
 
   constructor(
     @InjectRepository(Status)
-    private readonly statusRepository: Repository<Status>
+    private readonly statusRepository: Repository<Status>,
+    @InjectRepository(Project)
+    private projectsRepository: Repository<Project>
   ) {}
 
-  async createStatus(dto: CreateStatusDto, projectId: number): Promise<Status> {
+  async createStatus(projectId: number, dto: CreateStatusDto): Promise<Status> {
     const status = this.statusRepository.create({ ...dto, project: { id: projectId } });
     return await this.statusRepository.save(status);
   }
-
-  // async createColumn(dto: CreateColumnDto, project: Project): Promise<ColumnName> {
-  //   const column = this.columnNameRepository.create({ ...dto, project });
-  //   return await this.columnNameRepository.save(column);
-  // }
-
-  // async getProjects(user: User): Promise<Project[]> {
-  //   return await this.projectRepository.find({
-  //     where: { user: { id: user.id } },
-  //     relations: ['user']
-  //   });
-  // }
 
   async getStatusById(id: number, project: Project): Promise<Status> {
     const status = await this.statusRepository.findOne({
@@ -37,7 +27,7 @@ export class StatusesService {
       relations: ['project']
     });
     if (!status) {
-      throw new NotFoundException('Столбец не найден');
+      throw new NotFoundException('Статус задачи не найден');
     }
     return status;
   }
