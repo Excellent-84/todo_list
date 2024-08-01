@@ -5,12 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './projects.entity';
 import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/users.entity';
+import { Status } from '../statuses/statuses.entity';
 
 @Module({
   providers: [ProjectsService],
   controllers: [ProjectsController],
   imports: [
-    TypeOrmModule.forFeature([User, Project]),
+    TypeOrmModule.forFeature([User, Project, Status]),
     forwardRef(() => AuthModule)
   ],
   exports: [

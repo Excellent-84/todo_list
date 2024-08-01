@@ -6,6 +6,8 @@ import { User } from "./users/users.entity";
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
 import { Project } from "./projects/projects.entity";
+import { StatusesModule } from './statuses/statuses.module';
+import { Status } from "./statuses/statuses.entity";
 
 
 @Module({
@@ -22,12 +24,13 @@ import { Project } from "./projects/projects.entity";
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Project],
+      entities: [User, Project, Status],
       synchronize: true
     }),
     UsersModule,
     AuthModule,
     ProjectsModule,
+    StatusesModule,
   ],
 })
 

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../users/users.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Status } from '../statuses/statuses.entity';
 
 @Entity()
 export class Project {
@@ -23,4 +24,7 @@ export class Project {
 
   @ManyToOne(() => User, (user) => user.projects)
   user: User;
+
+  @OneToMany(() => Status, (status) => status.project)
+  statuses: Status[];
 }

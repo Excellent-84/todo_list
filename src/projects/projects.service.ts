@@ -12,7 +12,7 @@ export class ProjectsService {
 
   constructor(
     @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>
+    private readonly projectRepository: Repository<Project>,
   ) {}
 
   async createProject(dto: CreateProjectDto, user: User): Promise<Project> {
@@ -23,14 +23,14 @@ export class ProjectsService {
   async getProjects(user: User): Promise<Project[]> {
     return await this.projectRepository.find({
       where: { user: { id: user.id } },
-      relations: ['user']
+      relations: ['user', 'columns']
     });
   }
 
   async getOneProject(id: number, user: User): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: { id },
-      relations: ['user']
+      relations: ['user', 'columns']
     });
     if (!project || project.user.id !== user.id) {
       throw new ForbiddenException('У вас нет доступа к этому проекту');
