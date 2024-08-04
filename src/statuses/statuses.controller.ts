@@ -9,7 +9,7 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 
 @ApiTags('Столбцы')
 @UseGuards(JwtAuthGuard)
-@Controller('project/:id/columns')
+@Controller('project/:id/statuses')
 export class StatusesController {
 
   constructor(private readonly statusService: StatusesService) {}
@@ -51,5 +51,10 @@ export class StatusesController {
   @Delete(':id')
   async delete(@Param('id') id: number, @Req() req): Promise<void> {
     return this.statusService.deleteStatus(id, req.project);
+  }
+
+  @Put(':id/move')
+  move(@Param('id') id: number, @Body('newOrder') newOrder: number, @Req() req): Promise<void> {
+    return this.statusService.moveStatus(id, newOrder, req.project);
   }
 }

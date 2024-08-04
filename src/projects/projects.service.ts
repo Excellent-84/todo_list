@@ -23,14 +23,14 @@ export class ProjectsService {
   async getProjects(user: User): Promise<Project[]> {
     return await this.projectRepository.find({
       where: { user: { id: user.id } },
-      relations: ['user', 'columns']
+      relations: ['user', 'statuses']
     });
   }
 
   async getOneProject(id: number, user: User): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: { id },
-      relations: ['user', 'columns']
+      relations: ['user', 'statuses']
     });
     if (!project || project.user.id !== user.id) {
       throw new ForbiddenException('У вас нет доступа к этому проекту');

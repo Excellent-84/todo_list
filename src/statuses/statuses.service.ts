@@ -42,4 +42,10 @@ export class StatusesService {
     const status = await this.getStatusById(id, project);
     await this.statusRepository.delete(status);
   }
+
+  async moveStatus(id: number, newOrder: number, project: Project): Promise<void> {
+    const status = await this.getStatusById(id, project);
+    status.order = newOrder;
+    await this.statusRepository.save(status);
+  }
 }
