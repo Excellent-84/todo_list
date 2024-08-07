@@ -32,7 +32,7 @@ export class ProjectsController {
   @ApiResponse({ status: 200, type: Project })
   @Get(':id')
   async findOne(@Param('id') id: number, @Req() req): Promise<Project> {
-    return this.projectService.getOneProject(id, req.user);
+    return this.projectService.getProjectById(id, req.user);
   }
 
 	@ApiOperation({ summary: 'Обновить проект' })
