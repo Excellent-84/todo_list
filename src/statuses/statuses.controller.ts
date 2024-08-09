@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { StatusesService } from './statuses.service';
@@ -28,7 +28,6 @@ export class StatusesController {
   @ApiResponse({ status: 200, type: [Status] })
   @Get()
   async findAll(@Param('id') projectId: number): Promise<Status[]> {
-    console.log(projectId);
     return this.statusService.getStatuses(projectId);
   }
 
@@ -39,13 +38,20 @@ export class StatusesController {
     return this.statusService.getStatusById(id, req.project);
   }
 
-	@ApiOperation({ summary: 'Обновить столбец' })
+	@ApiOperation({ summary: 'Обновить статус задачи' })
   @ApiResponse({ status: 200, type: Status })
   @Put(':id')
   async update(
     @Param('id') id: number, @Body() dto: UpdateStatusDto, @Req() req
   ): Promise<Status> {
     return this.statusService.updateStatus(id, dto, req.project);
+  }
+
+  @ApiOperation({ summary: 'Удалить статус задачи' })
+  @ApiResponse({ status: 204, type: Status })
+  @Delete(':id')
+  async delete(@Param('id') id: number, @Req() req): Promise<void> {
+    return this.statusService.deleteStatus(id, req.project);
   }
 
   @ApiOperation({ summary: 'Переместить статус задачи' })
