@@ -44,6 +44,7 @@ export class StatusesService {
     return status;
   }
 
+  // order не меняется в updateStatus
   async updateStatus(id: number, dto: UpdateStatusDto, project: Project): Promise<Status> {
     const status = await this.getStatusById(id, project);
     Object.assign(status, dto);

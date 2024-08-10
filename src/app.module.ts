@@ -8,6 +8,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { Project } from "./projects/projects.entity";
 import { StatusesModule } from './statuses/statuses.module';
 import { Status } from "./statuses/statuses.entity";
+import { TasksModule } from './tasks/tasks.module';
 
 
 @Module({
@@ -31,6 +32,7 @@ import { Status } from "./statuses/statuses.entity";
     AuthModule,
     ProjectsModule,
     StatusesModule,
+    TasksModule,
   ],
 })
 
