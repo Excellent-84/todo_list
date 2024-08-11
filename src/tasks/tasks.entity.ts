@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Status } from "src/statuses/statuses.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Tasks {
+export class Task {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @PrimaryGeneratedColumn()
@@ -12,6 +12,14 @@ export class Tasks {
   @ApiProperty({ example: 'Task title', description: 'Название задачи' })
   @Column('varchar', { nullable: true, length: 50 })
   title!: string;
+
+  @ApiProperty({ example: 'Task description', description: 'Описание задачи' })
+  @Column('varchar', { length: 255, nullable: true })
+  description?: string;
+
+  @ApiProperty({ example: 'DateTime', description: 'Дата и время создания' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  createdAt!: Date;
 
   @ApiProperty({ example: '1', description: 'Номер задачи' })
   @Column('int', { nullable: true })

@@ -9,7 +9,7 @@ export class CreateStatusDto {
   @IsNotEmpty({ message: 'Поле не должно быть пустым' })
   title: string;
 
-  @ApiProperty({ example: '1', description: 'Номер столбца статуса задачи' })
+  @ApiProperty({ example: '1', description: 'Номер статуса задачи' })
   @Type(() => Number)
   @IsInt({ message: 'Должно быть целым числом' })
   order: number;

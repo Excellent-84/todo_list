@@ -11,7 +11,6 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('projects/:id/statuses')
 export class StatusesController {
-  projectsRepository: any;
 
   constructor(private readonly statusService: StatusesService) {}
 
