@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { TasksService } from './tasks.service';
 import { Task } from './tasks.entity';
@@ -8,7 +8,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 
 @ApiTags('Задачи')
 @UseGuards(JwtAuthGuard)
-@Controller('tasks')
+@Controller('projects/:id/statuses/:id/tasks')
 export class TasksController {
 
   constructor(private readonly taskService: TasksService) {}
@@ -58,8 +58,8 @@ export class TasksController {
   async move(
     @Param('id') id: number,
     @Body('newOrder') newOrder: number,
-    @Req() req
+    @Body('newStatusId') newStatusId: number
   ): Promise<Task[]> {
-    return this.taskService.moveTask(id, newOrder);
+    return this.taskService.moveTask(id, newOrder, newStatusId);
   }
 }

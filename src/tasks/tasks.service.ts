@@ -13,22 +13,23 @@ export class TasksService {
     private readonly taskRepository: Repository<Task>
   ) {}
 
-  async createTask(projectId: number, dto: CreateTaskDto): Promise<Task> {
+  async createTask(statusId: number, dto: CreateTaskDto): Promise<Task> {
     const task = this.taskRepository.create({
-      ...dto, status: { id: projectId }, order: dto.order
+      ...dto, status: { id: statusId }, order: dto.order
     });
     await this.taskRepository.save(task);
 
-    const tasks = await this.getTasks(projectId);
+    const tasks = await this.getTasks(statusId);
     await this.updateTaskOrder(tasks);
 
     return task;
   }
 
-  async getTasks(projectId: number): Promise<Task[]> {
+  async getTasks(statusId: number): Promise<Task[]> {
     return await this.taskRepository.find({
-      where: { status: { id: projectId } },
-      relations: ['status']
+      where: { status: { id: statusId } },
+      relations: ['status'],
+      order: { order: 'ASC' }
     });
   }
 
@@ -43,7 +44,6 @@ export class TasksService {
     return task;
   }
 
-  // order не меняется в updateStatus
   async updateTask(id: number, dto: UpdateTaskDto): Promise<Task> {
     const task = await this.getTaskById(id);
     Object.assign(task, dto);
@@ -57,32 +57,44 @@ export class TasksService {
 
   async deleteTask(id: number): Promise<void> {
     const task = await this.getTaskById(id);
-    await this.taskRepository.delete(task);
+    await this.taskRepository.remove(task);
 
     const tasks = await this.getTasks(task.status.id);
     await this.updateTaskOrder(tasks);
   }
 
-  async moveTask(id: number, newOrder: number): Promise<Task[]> {
+  async moveTask(id: number, newOrder?: number, newStatusId?: number): Promise<Task[]> {
     const taskToMove = await this.getTaskById(id);
-    const tasks = await this.getTasks(taskToMove.status.id);
+    const currentStatusId = taskToMove.status.id;
 
-    await this.updateTaskOrder(tasks, taskToMove, newOrder);
-    await this.taskRepository.save(tasks);
+    taskToMove.status.id = newStatusId;
+    await this.taskRepository.save(taskToMove);
 
-    return tasks;
+    const currentTasks = await this.getTasks(currentStatusId);
+    await this.updateTaskOrder(currentTasks);
+
+    const newTasks = await this.getTasks(newStatusId);
+
+    taskToMove.order = newOrder;
+
+    await this.updateTaskOrder(newTasks, taskToMove, newOrder);
+
+    return newTasks;
   }
 
   private async updateTaskOrder(
     tasks: Task[], taskToMove?: Task, newOrder?: number
   ): Promise<Task[]> {
     if (taskToMove) {
-      const moveIndex = tasks.findIndex(task => task.id === taskToMove.id);
-      tasks.splice(newOrder - 1, 0, ...tasks.splice(moveIndex, 1));
+        const moveIndex = tasks.findIndex(task => task.id === taskToMove.id);
+        if (moveIndex !== -1) {
+            tasks.splice(moveIndex, 1);
+        }
+        tasks.splice(newOrder - 1, 0, taskToMove);
     }
 
     tasks.forEach((task, index) => {
-      task.order = index + 1;
+        task.order = index + 1;
     });
 
     await this.taskRepository.save(tasks);

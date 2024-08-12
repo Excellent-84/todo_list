@@ -6,12 +6,13 @@ import { Project } from './projects.entity';
 import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/users.entity';
 import { Status } from '../statuses/statuses.entity';
+import { Task } from '../tasks/tasks.entity';
 
 @Module({
   providers: [ProjectsService],
   controllers: [ProjectsController],
   imports: [
-    TypeOrmModule.forFeature([User, Project, Status]),
+    TypeOrmModule.forFeature([User, Project, Status, Task]),
     forwardRef(() => AuthModule)
   ],
   exports: [

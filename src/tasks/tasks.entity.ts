@@ -26,6 +26,5 @@ export class Task {
   order!: number;
 
   @ManyToOne(() => Status, (status) => status.tasks, { onDelete: 'CASCADE'})
-  // @Exclude()
   status: Status;
 }
