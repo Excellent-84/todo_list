@@ -1,22 +1,13 @@
-// import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-
-// export const CurrentUser = createParamDecorator(
-//   (data: unknown, ctx: ExecutionContext) => {
-//     const request = ctx.switchToHttp().getRequest();
-//     return request.user;
-//   },
-// );
-
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { User } from '../users/users.entity'; // Импортируйте User
+import { User } from '../users/users.entity';
 
 export const CurrentUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    const user = request.user as User; // Должен быть User
+    const user = request.user as User;
     if (!user) {
-      throw new UnauthorizedException('Пользователь не авторизован');
+      throw new UnauthorizedException('Пользователь не авторизован!');
     }
-      return user;
-    },
-   );
+    return user;
+  }
+);
