@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique, OneToMany } from 'typeorm';
 import { Project } from '../projects/projects.entity';
-import { Exclude } from 'class-transformer';
 import { Task } from '../tasks/tasks.entity';
 
 @Entity()
@@ -21,7 +20,6 @@ export class Status {
   order!: number;
 
   @ManyToOne(() => Project, (project) => project.statuses, { onDelete: 'CASCADE'})
-  // @Exclude()
   project: Project;
 
   @OneToMany(() => Task, (task) => task.status, { cascade: true })
