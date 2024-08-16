@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Status } from "src/statuses/statuses.entity";
+import { Status } from "../statuses/statuses.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -22,7 +22,7 @@ export class Task {
   createdAt!: Date;
 
   @ApiProperty({ example: '1', description: 'Номер задачи' })
-  @Column('int', { nullable: true })
+  @Column('int')
   order!: number;
 
   @ManyToOne(() => Status, (status) => status.tasks, { onDelete: 'CASCADE'})

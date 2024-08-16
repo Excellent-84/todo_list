@@ -4,38 +4,42 @@ import { Task } from './tasks.entity';
 import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { User } from '../users/users.entity';
+import { StatusesService } from '../statuses/statuses.service';
 
 @Injectable()
 export class TasksService {
 
   constructor(
     @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>
+    private readonly tasksRepository: Repository<Task>,
+    private readonly statusService: StatusesService
   ) {}
 
-  async createTask(statusId: number, dto: CreateTaskDto): Promise<Task> {
-    const task = this.taskRepository.create({
+  async createTask(
+    projectId: number, statusId: number, dto: CreateTaskDto, user: User
+  ): Promise<Task> {
+    const task = this.tasksRepository.create({
       ...dto, status: { id: statusId }, order: dto.order
     });
-    await this.taskRepository.save(task);
-
-    const tasks = await this.getTasks(statusId);
+    const tasks = await this.getTasks(projectId, statusId, user);
+    await this.tasksRepository.save(task);
     await this.updateTaskOrder(tasks);
 
     return task;
   }
 
-  async getTasks(statusId: number): Promise<Task[]> {
-    return await this.taskRepository.find({
-      where: { status: { id: statusId } },
-      relations: ['status'],
-      order: { order: 'ASC' }
-    });
+  async getTasks(projectId: number, statusId: number, user: User): Promise<Task[]> {
+    const status = await this.statusService.getStatusById(projectId, statusId, user);
+    return status.tasks;
   }
 
-  async getTaskById(id: number): Promise<Task> {
-    const task = await this.taskRepository.findOne({
-      where: { id },
+  async getTaskById(
+    projectId: number, statusId: number, taskId: number, user: User
+  ): Promise<Task> {
+    await this.getTasks(projectId, statusId, user);
+    const task = await this.tasksRepository.findOne({
+      where: { id: taskId },
       relations: ['status']
     });
     if (!task) {
@@ -44,36 +48,46 @@ export class TasksService {
     return task;
   }
 
-  async updateTask(id: number, dto: UpdateTaskDto): Promise<Task> {
-    const task = await this.getTaskById(id);
+  async updateTask(
+    projectId: number, statusId: number, taskId: number, dto: UpdateTaskDto, user: User
+  ): Promise<Task> {
+    const task = await this.getTaskById(projectId, statusId, taskId, user);
     Object.assign(task, dto);
-    await this.taskRepository.save(task);
+    await this.tasksRepository.save(task);
 
-    const tasks = await this.getTasks(task.status.id);
+    const tasks = await this.getTasks(projectId, statusId, user);
     await this.updateTaskOrder(tasks);
 
     return task;
   }
 
-  async deleteTask(id: number): Promise<void> {
-    const task = await this.getTaskById(id);
-    await this.taskRepository.remove(task);
-
-    const tasks = await this.getTasks(task.status.id);
+  async deleteTask(
+    projectId: number, statusId: number, taskId: number, user: User
+  ): Promise<void> {
+    const task = await this.getTaskById(projectId, statusId, taskId, user);
+    const tasks = await this.getTasks(projectId, statusId, user);
+    await this.tasksRepository.remove(task);
     await this.updateTaskOrder(tasks);
   }
 
-  async moveTask(id: number, newOrder?: number, newStatusId?: number): Promise<Task[]> {
-    const taskToMove = await this.getTaskById(id);
+  async moveTask(
+    projectId: number,
+    statusId: number,
+    taskId: number,
+    user: User,
+    newOrder?: number,
+    newStatusId?: number
+  ): Promise<Task[]> {
+    const taskToMove = await this.getTaskById(projectId, statusId, taskId, user);
     const currentStatusId = taskToMove.status.id;
 
     taskToMove.status.id = newStatusId;
-    await this.taskRepository.save(taskToMove);
+    await this.tasksRepository.save(taskToMove);
 
-    const currentTasks = await this.getTasks(currentStatusId);
+    const currentTasks = await this.getTasks(projectId, statusId, user);
     await this.updateTaskOrder(currentTasks);
 
-    const newTasks = await this.getTasks(newStatusId);
+    const newTasks = await this.getTasks(projectId, newStatusId, user);
 
     taskToMove.order = newOrder;
 
@@ -97,7 +111,7 @@ export class TasksService {
         task.order = index + 1;
     });
 
-    await this.taskRepository.save(tasks);
+    await this.tasksRepository.save(tasks);
 
     return tasks;
   }

@@ -42,7 +42,9 @@ export class StatusesService {
   ): Promise<Status> {
     await this.getStatuses(projectId, user);
     const status = await this.statusRepository.findOne({
-      where: { id: statusId }
+      where: { id: statusId },
+      relations: ['tasks'],
+      order: { order: 'ASC' }
     });
     if (!status) {
       throw new NotFoundException('Статус задачи не найден');

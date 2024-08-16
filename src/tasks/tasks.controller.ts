@@ -1,14 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { TasksService } from './tasks.service';
 import { Task } from './tasks.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { GetUser } from '../users/get-user.decorator';
+import { User } from '../users/users.entity';
 
 @ApiTags('Задачи')
 @UseGuards(JwtAuthGuard)
-@Controller('projects/:id/statuses/:id/tasks')
+@Controller('projects/:id/statuses/:statusId/tasks')
 export class TasksController {
 
   constructor(private readonly taskService: TasksService) {}
@@ -17,49 +19,75 @@ export class TasksController {
   @ApiResponse({ status: 201, type: Task })
   @Post()
   async create(
-    @Param('id') statusId: number, @Body() dto: CreateTaskDto
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @Body() dto: CreateTaskDto,
+    @GetUser() user: User
   ): Promise<Task> {
-    return this.taskService.createTask(statusId, dto);
+    return this.taskService.createTask(projectId, statusId, dto, user);
   }
 
 	@ApiOperation({ summary: 'Получить все задачи' })
   @ApiResponse({ status: 200, type: [Task] })
   @Get()
-  async findAll(@Param('id') statusId: number): Promise<Task[]> {
-    return this.taskService.getTasks(statusId);
+  async findAll(
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @GetUser() user: User
+  ): Promise<Task[]> {
+    return this.taskService.getTasks(projectId, statusId, user);
   }
 
 	@ApiOperation({ summary: 'Получить задачу по id' })
   @ApiResponse({ status: 200, type: Task })
-  @Get(':id')
-  async findOne(@Param('id') id: number, @Req() req): Promise<Task> {
-    return this.taskService.getTaskById(id);
+  @Get(':taskId')
+  async findOne(
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @Param('taskId') taskId: number,
+    @GetUser() user: User
+  ): Promise<Task> {
+    return this.taskService.getTaskById(projectId, statusId, taskId, user);
   }
 
 	@ApiOperation({ summary: 'Обновить задачу' })
   @ApiResponse({ status: 200, type: Task })
-  @Put(':id')
+  @Put(':taskId')
   async update(
-    @Param('id') id: number, @Body() dto: UpdateTaskDto, @Req() req
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @Param('taskId') taskId: number,
+    @Body() dto: UpdateTaskDto,
+    @GetUser() user: User
   ): Promise<Task> {
-    return this.taskService.updateTask(id, dto);
+    return this.taskService.updateTask(projectId, statusId, taskId, dto, user);
   }
 
   @ApiOperation({ summary: 'Удалить задачу' })
   @ApiResponse({ status: 204, type: Task })
-  @Delete(':id')
-  async delete(@Param('id') id: number, @Req() req): Promise<void> {
-    return this.taskService.deleteTask(id);
+  @Delete(':taskId')
+  async delete(
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @Param('taskId') taskId: number,
+    @GetUser() user: User
+  ): Promise<void> {
+    return this.taskService.deleteTask(projectId, statusId, taskId, user);
   }
 
   @ApiOperation({ summary: 'Переместить задачу' })
   @ApiResponse({ status: 200, type: [Task] })
-  @Put(':id/move')
+  @Put(':taskId/move')
   async move(
-    @Param('id') id: number,
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @Param('taskId') taskId: number,
+    @GetUser() user: User,
     @Body('newOrder') newOrder: number,
     @Body('newStatusId') newStatusId: number
   ): Promise<Task[]> {
-    return this.taskService.moveTask(id, newOrder, newStatusId);
+    return this.taskService.moveTask(
+      projectId, statusId, taskId, user, newOrder, newStatusId
+    );
   }
 }
