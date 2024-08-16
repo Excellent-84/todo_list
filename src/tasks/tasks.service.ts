@@ -40,7 +40,8 @@ export class TasksService {
     await this.getTasks(projectId, statusId, user);
     const task = await this.tasksRepository.findOne({
       where: { id: taskId },
-      relations: ['status']
+      relations: ['status'],
+      order: { order: 'ASC' }
     });
     if (!task) {
       throw new NotFoundException('Задача не найдена');
@@ -110,6 +111,8 @@ export class TasksService {
     tasks.forEach((task, index) => {
         task.order = index + 1;
     });
+
+    tasks.sort((a, b) => a.order - b.order);
 
     await this.tasksRepository.save(tasks);
 
