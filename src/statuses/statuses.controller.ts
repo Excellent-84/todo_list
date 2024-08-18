@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { StatusesService } from './statuses.service';
@@ -61,7 +61,7 @@ export class StatusesController {
   }
 
   @ApiOperation({ summary: 'Удалить статус задачи' })
-  @ApiResponse({ status: 204, type: Status })
+  @HttpCode(204)
   @Delete(':statusId')
   async delete(
     @Param('id') projectId: number,

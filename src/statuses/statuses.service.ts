@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Status } from './statuses.entity';
@@ -21,15 +21,18 @@ export class StatusesService {
   async createStatus(
     projectId: number, dto: CreateStatusDto, user: User
   ): Promise<Status> {
+    await this.projectsService.getProjectById(projectId, user);
     const status = this.statusRepository.create({
-      ...dto, project: { id: projectId }, order: dto.order
+      ...dto, project: { id: projectId }
     });
-    await this.statusRepository.save(status);
-
-    const statuses = await this.getStatuses(projectId, user);
-    await this.updateStatusOrder(statuses);
-
-    return status;
+    try {
+      await this.statusRepository.save(status);
+      const statuses = await this.getStatuses(projectId, user);
+      await this.updateStatusOrder(statuses);
+      return status;
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при создании статуса');
+    }
   }
 
   async getStatuses(projectId: number, user: User): Promise<Status[]> {
@@ -40,11 +43,10 @@ export class StatusesService {
   async getStatusById(
     projectId: number, statusId: number, user: User
   ): Promise<Status> {
-    await this.getStatuses(projectId, user);
+    await this.projectsService.getProjectById(projectId, user);
     const status = await this.statusRepository.findOne({
       where: { id: statusId },
-      relations: ['tasks'],
-      order: { order: 'ASC' }
+      relations: ['tasks']
     });
     if (!status) {
       throw new NotFoundException('Статус задачи не найден');
@@ -57,19 +59,14 @@ export class StatusesService {
   ): Promise<Status> {
     const status = await this.getStatusById(projectId, statusId, user);
     Object.assign(status, dto);
-    await this.statusRepository.save(status);
-
-    const statuses = await this.getStatuses(projectId, user);
-    await this.updateStatusOrder(statuses);
-
-    return status;
+    return this.statusRepository.save(status);
   }
 
   async deleteStatus(
     projectId: number, statusId: number, user: User
   ): Promise<void> {
     const status = await this.getStatusById(projectId, statusId, user);
-    await this.statusRepository.delete(status);
+    await this.statusRepository.remove(status);
 
     const statuses = await this.getStatuses(projectId, user);
     await this.updateStatusOrder(statuses);
@@ -80,8 +77,8 @@ export class StatusesService {
   ): Promise<Status[]> {
     const statusToMove = await this.getStatusById(projectId, statusId, user);
     const statuses = await this.getStatuses(projectId, user);
-    await this.updateStatusOrder(statuses, statusToMove, newOrder);
 
+    await this.updateStatusOrder(statuses, statusToMove, newOrder);
     return await this.statusRepository.save(statuses);
   }
 

@@ -12,11 +12,11 @@ export class Status {
   id!: number;
 
   @ApiProperty({ example: 'Status title', description: 'Название статуса задачи' })
-  @Column('varchar', { nullable: true, length: 50 })
+  @Column('varchar', { length: 50 })
   title!: string;
 
-  @ApiProperty({ example: '1', description: 'Номер столбца статуса задачи' })
-  @Column('int', { nullable: true })
+  @ApiProperty({ example: '1', description: 'Номер статуса задачи' })
+  @Column('int')
   order!: number;
 
   @ManyToOne(() => Project, (project) => project.statuses, { onDelete: 'CASCADE'})
