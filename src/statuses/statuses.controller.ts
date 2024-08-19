@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { StatusesService } from './statuses.service';
 import { Status } from './statuses.entity';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetUser } from '../users/get-user.decorator';
 import { User } from '../users/users.entity';
-
+import { MoveStatusDto } from './dto/move-status.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('Статусы задач')
 @UseGuards(JwtAuthGuard)
@@ -77,9 +77,9 @@ export class StatusesController {
   async move(
     @Param('id') projectId: number,
     @Param('statusId') statusId: number,
-    @Body('newOrder') newOrder: number,
+    @Body() dto: MoveStatusDto,
     @GetUser() user: User
   ): Promise<Status[]> {
-    return this.statusService.moveStatus(projectId, statusId, newOrder, user);
+    return this.statusService.moveStatus(projectId, statusId, dto, user);
   }
 }

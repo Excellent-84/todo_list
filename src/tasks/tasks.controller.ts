@@ -1,12 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/auth-jwt.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TasksService } from './tasks.service';
 import { Task } from './tasks.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { GetUser } from '../users/get-user.decorator';
 import { User } from '../users/users.entity';
+import { MoveTaskDto } from './dto/move-task.dto';
 
 @ApiTags('Задачи')
 @UseGuards(JwtAuthGuard)
@@ -63,17 +64,33 @@ export class TasksController {
     return this.taskService.updateTask(projectId, statusId, taskId, dto, user);
   }
 
-  @ApiOperation({ summary: 'Удалить задачу' })
-  @ApiResponse({ status: 204, type: Task })
-  @Delete(':taskId')
-  async delete(
-    @Param('id') projectId: number,
-    @Param('statusId') statusId: number,
-    @Param('taskId') taskId: number,
-    @GetUser() user: User
-  ): Promise<void> {
-    return this.taskService.deleteTask(projectId, statusId, taskId, user);
-  }
+  // @ApiOperation({ summary: 'Удалить задачу' })
+  // @ApiResponse({ status: 204, type: Task })
+  // @Delete(':taskId')
+  // async delete(
+  //   @Param('id') projectId: number,
+  //   @Param('statusId') statusId: number,
+  //   @Param('taskId') taskId: number,
+  //   @GetUser() user: User
+  // ): Promise<void> {
+  //   return this.taskService.deleteTask(projectId, statusId, taskId, user);
+  // }
+
+  // @ApiOperation({ summary: 'Переместить задачу' })
+  // @ApiResponse({ status: 200, type: [Task] })
+  // @Put(':taskId/move')
+  // async move(
+  //   @Param('id') projectId: number,
+  //   @Param('statusId') statusId: number,
+  //   @Param('taskId') taskId: number,
+  //   @GetUser() user: User,
+  //   @Body('newOrder') newOrder: number,
+  //   @Body('newStatusId') newStatusId: number
+  // ): Promise<Task[]> {
+  //   return this.taskService.moveTask(
+  //     projectId, statusId, taskId, user, newOrder, newStatusId
+  //   );
+  // }
 
   @ApiOperation({ summary: 'Переместить задачу' })
   @ApiResponse({ status: 200, type: [Task] })
@@ -82,12 +99,9 @@ export class TasksController {
     @Param('id') projectId: number,
     @Param('statusId') statusId: number,
     @Param('taskId') taskId: number,
+    @Body() dto: MoveTaskDto,
     @GetUser() user: User,
-    @Body('newOrder') newOrder: number,
-    @Body('newStatusId') newStatusId: number
   ): Promise<Task[]> {
-    return this.taskService.moveTask(
-      projectId, statusId, taskId, user, newOrder, newStatusId
-    );
+    return this.taskService.moveTask(projectId, statusId, taskId, user, dto);
   }
 }

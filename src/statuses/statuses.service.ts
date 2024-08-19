@@ -6,6 +6,7 @@ import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { User } from '../users/users.entity';
 import { ProjectsService } from '../projects/projects.service';
+import { MoveStatusDto } from './dto/move-status.dto';
 
 
 
@@ -21,13 +22,13 @@ export class StatusesService {
   async createStatus(
     projectId: number, dto: CreateStatusDto, user: User
   ): Promise<Status> {
-    await this.projectsService.getProjectById(projectId, user);
+    const statuses = await this.getStatuses(projectId, user);
+    const order = statuses.length + 1;
     const status = this.statusRepository.create({
-      ...dto, project: { id: projectId }
+      ...dto, order, project: { id: projectId }
     });
     try {
       await this.statusRepository.save(status);
-      const statuses = await this.getStatuses(projectId, user);
       await this.updateStatusOrder(statuses);
       return status;
     } catch (error) {
@@ -73,21 +74,22 @@ export class StatusesService {
   }
 
   async moveStatus(
-    projectId: number, statusId: number, newOrder: number, user: User
+    projectId: number, statusId: number, dto: MoveStatusDto, user: User
   ): Promise<Status[]> {
     const statusToMove = await this.getStatusById(projectId, statusId, user);
     const statuses = await this.getStatuses(projectId, user);
 
-    await this.updateStatusOrder(statuses, statusToMove, newOrder);
-    return await this.statusRepository.save(statuses);
+    await this.updateStatusOrder(statuses, statusToMove, dto.order);
+    return statuses;
   }
 
   private async updateStatusOrder(
-    statuses: Status[], statusToMove?: Status, newOrder?: number
+    statuses: Status[], statusToMove?: Status, newOrder?: number,
   ): Promise<Status[]> {
     if (statusToMove) {
       const moveIndex = statuses.findIndex(status => status.id === statusToMove.id);
-      statuses.splice(newOrder - 1, 0, ...statuses.splice(moveIndex, 1));
+      statuses.splice(moveIndex, 1);
+      statuses.splice(newOrder - 1, 0, statusToMove);
     }
 
     statuses.forEach((status, index) => {

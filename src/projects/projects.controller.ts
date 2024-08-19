@@ -1,13 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Project } from './projects.entity';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/auth-jwt.guard';
 import { ProjectsService } from './projects.service';
-import { CurrentUser } from 'src/auth/current-user.decorator';
-import { GetUser } from 'src/users/get-user.decorator';
-import { User } from 'src/users/users.entity';
+import { GetUser } from '../users/get-user.decorator';
+import { User } from '../users/users.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 
 @ApiTags('Проекты')

@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Project } from '../projects/projects.entity';
 import { Task } from '../tasks/tasks.entity';
 
 @Entity()
-@Unique(['project', 'title'])
 export class Status {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })

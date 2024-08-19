@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateTaskDto {
 
@@ -13,9 +12,4 @@ export class CreateTaskDto {
   @IsString({ message: 'Должно быть строкой' })
   @IsOptional()
   description?: string;
-
-  @ApiProperty({ example: '1', description: 'Номер задачи' })
-  @Type(() => Number)
-  @IsInt({ message: 'Должно быть целым числом' })
-  order: number;
 }
