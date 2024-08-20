@@ -64,36 +64,20 @@ export class TasksController {
     return this.taskService.updateTask(projectId, statusId, taskId, dto, user);
   }
 
-  // @ApiOperation({ summary: 'Удалить задачу' })
-  // @ApiResponse({ status: 204, type: Task })
-  // @Delete(':taskId')
-  // async delete(
-  //   @Param('id') projectId: number,
-  //   @Param('statusId') statusId: number,
-  //   @Param('taskId') taskId: number,
-  //   @GetUser() user: User
-  // ): Promise<void> {
-  //   return this.taskService.deleteTask(projectId, statusId, taskId, user);
-  // }
-
-  // @ApiOperation({ summary: 'Переместить задачу' })
-  // @ApiResponse({ status: 200, type: [Task] })
-  // @Put(':taskId/move')
-  // async move(
-  //   @Param('id') projectId: number,
-  //   @Param('statusId') statusId: number,
-  //   @Param('taskId') taskId: number,
-  //   @GetUser() user: User,
-  //   @Body('newOrder') newOrder: number,
-  //   @Body('newStatusId') newStatusId: number
-  // ): Promise<Task[]> {
-  //   return this.taskService.moveTask(
-  //     projectId, statusId, taskId, user, newOrder, newStatusId
-  //   );
-  // }
+  @ApiOperation({ summary: 'Удалить задачу' })
+  @ApiResponse({ status: 204, type: Task })
+  @Delete(':taskId')
+  async delete(
+    @Param('id') projectId: number,
+    @Param('statusId') statusId: number,
+    @Param('taskId') taskId: number,
+    @GetUser() user: User
+  ): Promise<void> {
+    return this.taskService.deleteTask(projectId, statusId, taskId, user);
+  }
 
   @ApiOperation({ summary: 'Переместить задачу' })
-  @ApiResponse({ status: 200, type: [Task] })
+  @ApiResponse({ status: 200, type: Task })
   @Put(':taskId/move')
   async move(
     @Param('id') projectId: number,
@@ -101,7 +85,7 @@ export class TasksController {
     @Param('taskId') taskId: number,
     @Body() dto: MoveTaskDto,
     @GetUser() user: User,
-  ): Promise<Task[]> {
+  ): Promise<Task> {
     return this.taskService.moveTask(projectId, statusId, taskId, user, dto);
   }
 }

@@ -9,7 +9,6 @@ import { ProjectsService } from '../projects/projects.service';
 import { MoveStatusDto } from './dto/move-status.dto';
 
 
-
 @Injectable()
 export class StatusesService {
 
@@ -29,7 +28,7 @@ export class StatusesService {
     });
     try {
       await this.statusRepository.save(status);
-      await this.updateStatusOrder(statuses);
+      // await this.updateStatusOrder(statuses);
       return status;
     } catch (error) {
       throw new InternalServerErrorException('Ошибка при создании статуса');

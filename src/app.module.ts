@@ -11,7 +11,6 @@ import { Status } from "./statuses/statuses.entity";
 import { TasksModule } from './tasks/tasks.module';
 import { Task } from "./tasks/tasks.entity";
 
-
 @Module({
   controllers: [],
   providers: [],
@@ -36,5 +35,4 @@ import { Task } from "./tasks/tasks.entity";
     TasksModule,
   ],
 })
-
 export class AppModule {}

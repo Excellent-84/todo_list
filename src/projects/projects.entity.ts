@@ -10,7 +10,7 @@ export class Project {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ApiProperty({ example: 'Project name', description: 'Название проекта' })
+  @ApiProperty({ example: 'Project title', description: 'Название проекта' })
   @Column('varchar', { nullable: false, length: 50 })
   title!: string;
 

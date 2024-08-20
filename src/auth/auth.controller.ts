@@ -24,7 +24,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Авторизация пользователя' })
-  @ApiResponse({ status: 201, type: TokenResponse })
+  @ApiResponse({ status: 200, type: TokenResponse })
   @Post('/login')
   login(@Body() userDto: LoginUserDto) {
     return this.authService.login(userDto);

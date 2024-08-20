@@ -19,5 +19,4 @@ import { Task } from '../tasks/tasks.entity';
     ProjectsService
   ]
 })
-
 export class ProjectsModule {}
