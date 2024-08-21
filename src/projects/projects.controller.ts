@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Project } from './projects.entity';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -7,6 +7,7 @@ import { ProjectsService } from './projects.service';
 import { GetUser } from '../users/get-user.decorator';
 import { User } from '../users/users.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ParamsProjectDto } from './dto/params-project.dto';
 
 
 @ApiTags('Проекты')
@@ -19,7 +20,10 @@ export class ProjectsController {
 	@ApiOperation({ summary: 'Создать проект' })
   @ApiResponse({ status: 201, type: Project })
   @Post()
-  async create(@Body() dto: CreateProjectDto, @GetUser() user: User): Promise<Project> {
+  async create(
+    @Body() dto: CreateProjectDto,
+    @GetUser() user: User
+  ): Promise<Project> {
     return this.projectService.createProject(dto, user);
   }
 
@@ -27,30 +31,37 @@ export class ProjectsController {
   @ApiResponse({ status: 200, type: [Project] })
   @Get()
   async findAll(@GetUser() user: User): Promise<Project[]> {
-    console.log(user);
     return this.projectService.getProjects(user);
   }
 
 	@ApiOperation({ summary: 'Получить проект по id' })
   @ApiResponse({ status: 200, type: Project })
-  @Get(':id')
-  async findOne(@Param('id') id: number, @GetUser() user: User): Promise<Project> {
-    return this.projectService.getProjectById(id, user);
+  @Get(':projectId')
+  async findOne(
+    @Param() params: ParamsProjectDto,
+    @GetUser() user: User
+  ): Promise<Project> {
+    return this.projectService.getProjectById(params.projectId, user);
   }
 
 	@ApiOperation({ summary: 'Обновить проект' })
   @ApiResponse({ status: 200, type: Project })
-  @Put(':id')
+  @Put(':projectId')
   async update(
-    @Param('id') id: number, @Body() dto: UpdateProjectDto, @GetUser() user: User
+    @Param() params: ParamsProjectDto,
+    @Body() dto: UpdateProjectDto,
+    @GetUser() user: User
   ): Promise<Project> {
-    return this.projectService.updateProject(id, dto, user);
+    return this.projectService.updateProject(params.projectId, dto, user);
   }
 
 	@ApiOperation({ summary: 'Удалить проект' })
-  @ApiResponse({ status: 204, type: Project })
-  @Delete(':id')
-  async delete(@Param('id') id: number, @GetUser() user: User): Promise<void> {
-    return this.projectService.deleteProject(id, user);
+  @HttpCode(204)
+  @Delete(':projectId')
+  async delete(
+    @Param() params: ParamsProjectDto,
+    @GetUser() user: User
+  ): Promise<void> {
+    return this.projectService.deleteProject(params.projectId, user);
   }
 }

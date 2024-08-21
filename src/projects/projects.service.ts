@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './projects.entity';
 import { Repository } from 'typeorm';
@@ -21,14 +21,13 @@ export class ProjectsService {
 
   async createProject(dto: CreateProjectDto, user: User): Promise<Project> {
     const project = this.projectRepository.create({ ...dto, user });
-    await this.projectRepository.save(project);
-    const initialStatuses = [
-      { title: StatusEnum.TO_DO, order: 1, project },
-      { title: StatusEnum.IN_PROGRESS, order: 2, project },
-      { title: StatusEnum.DONE, order: 3, project },
-    ];
-    await this.statusRepository.save(initialStatuses);
-    return project;
+    try {
+      await this.projectRepository.save(project);
+      await this.createInitialStatuses(project);
+      return project;
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при создании проекта');
+    }
   }
 
   async getProjects(user: User): Promise<Project[]> {
@@ -41,7 +40,7 @@ export class ProjectsService {
   async getProjectById(id: number, user: User): Promise<Project> {
     const project = await this.projectRepository.findOne({
       where: { id },
-      relations: ['user', 'statuses']
+      relations: ['user', 'statuses', 'statuses.tasks']
     });
     if (!project || project.user.id !== user.id) {
       throw new ForbiddenException('У вас нет доступа к этому проекту');
@@ -52,11 +51,32 @@ export class ProjectsService {
   async updateProject(id: number, dto: UpdateProjectDto, user: User): Promise<Project> {
     const project = await this.getProjectById(id, user);
     Object.assign(project, dto);
-    return await this.projectRepository.save(project);
+    try {
+      return await this.projectRepository.save(project);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при обновлении проекта');
+    }
   }
 
   async deleteProject(id: number, user: User): Promise<void> {
-    const project = await this.getProjectById(id, user);
-    await this.projectRepository.remove(project);
+      const project = await this.getProjectById(id, user);
+    try {
+      await this.projectRepository.remove(project);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при удалении проекта');
+    }
+  }
+
+  private async createInitialStatuses(project: Project): Promise<Status[]> {
+    const initialStatuses = [
+      { title: StatusEnum.TO_DO, order: 1, project },
+      { title: StatusEnum.IN_PROGRESS, order: 2, project },
+      { title: StatusEnum.DONE, order: 3, project },
+    ];
+    try {
+      return await this.statusRepository.save(initialStatuses);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при создании начальных статусов');
+    }
   }
 }

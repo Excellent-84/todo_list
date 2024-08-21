@@ -8,7 +8,6 @@ import { User } from '../users/users.entity';
 import { ProjectsService } from '../projects/projects.service';
 import { MoveStatusDto } from './dto/move-status.dto';
 
-
 @Injectable()
 export class StatusesService {
 
@@ -28,7 +27,6 @@ export class StatusesService {
     });
     try {
       await this.statusRepository.save(status);
-      // await this.updateStatusOrder(statuses);
       return status;
     } catch (error) {
       throw new InternalServerErrorException('Ошибка при создании статуса');
@@ -59,17 +57,24 @@ export class StatusesService {
   ): Promise<Status> {
     const status = await this.getStatusById(projectId, statusId, user);
     Object.assign(status, dto);
-    return this.statusRepository.save(status);
+    try {
+      return this.statusRepository.save(status);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при обновлении статуса');
+    }
   }
 
   async deleteStatus(
     projectId: number, statusId: number, user: User
   ): Promise<void> {
     const status = await this.getStatusById(projectId, statusId, user);
-    await this.statusRepository.remove(status);
-
-    const statuses = await this.getStatuses(projectId, user);
-    await this.updateStatusOrder(statuses);
+    try {
+      await this.statusRepository.remove(status);
+      const statuses = await this.getStatuses(projectId, user);
+      await this.updateStatusOrder(statuses);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при удалении статуса');
+    }
   }
 
   async moveStatus(

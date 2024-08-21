@@ -8,10 +8,12 @@ import { GetUser } from '../users/get-user.decorator';
 import { User } from '../users/users.entity';
 import { MoveStatusDto } from './dto/move-status.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ParamsStatusDto } from './dto/params-status.dto';
+import { ParamsProjectDto } from '../projects/dto/params-project.dto';
 
 @ApiTags('Статусы задач')
 @UseGuards(JwtAuthGuard)
-@Controller('projects/:id/statuses')
+@Controller('projects/:projectId/statuses')
 export class StatusesController {
 
   constructor(private readonly statusService: StatusesService) {}
@@ -20,66 +22,62 @@ export class StatusesController {
   @ApiResponse({ status: 201, type: Status })
   @Post()
   async create(
-    @Param('id') projectId: number,
+    @Param() params: ParamsProjectDto,
     @Body() dto: CreateStatusDto,
     @GetUser() user: User
   ): Promise<Status> {
-    return this.statusService.createStatus(projectId, dto, user);
+    return this.statusService.createStatus(params.projectId, dto, user);
   }
 
   @ApiOperation({ summary: 'Получить все статусы' })
   @ApiResponse({ status: 200, type: [Status] })
   @Get()
   async findAll(
-    @Param('id') projectId: number,
+    @Param() params: ParamsProjectDto,
     @GetUser() user: User
   ): Promise<Status[]> {
-    return this.statusService.getStatuses(projectId, user);
+    return this.statusService.getStatuses(params.projectId, user);
   }
 
   @ApiOperation({ summary: 'Получить статус задачи по id' })
   @ApiResponse({ status: 200, type: Status })
   @Get(':statusId')
   async findOne(
-    @Param('id') projectId: number,
-    @Param('statusId') statusId: number,
+    @Param() params: ParamsStatusDto,
     @GetUser() user: User
   ): Promise<Status> {
-    return this.statusService.getStatusById(projectId, statusId, user);
+    return this.statusService.getStatusById(params.projectId, params.statusId, user);
   }
 
 	@ApiOperation({ summary: 'Обновить статус задачи' })
   @ApiResponse({ status: 200, type: Status })
   @Put(':statusId')
   async update(
-    @Param('id') projectId: number,
-    @Param('statusId') statusId: number,
+    @Param() params: ParamsStatusDto,
     @Body() dto: UpdateStatusDto,
     @GetUser() user: User
   ): Promise<Status> {
-    return this.statusService.updateStatus(projectId, statusId, dto, user);
+    return this.statusService.updateStatus(params.projectId, params.statusId, dto, user);
   }
 
   @ApiOperation({ summary: 'Удалить статус задачи' })
   @HttpCode(204)
   @Delete(':statusId')
   async delete(
-    @Param('id') projectId: number,
-    @Param('statusId') statusId: number,
+    @Param() params: ParamsStatusDto,
     @GetUser() user: User
   ): Promise<void> {
-    return this.statusService.deleteStatus(projectId, statusId, user);
+    return this.statusService.deleteStatus(params.projectId, params.statusId, user);
   }
 
   @ApiOperation({ summary: 'Переместить статус задачи' })
   @ApiResponse({ status: 200, type: [Status] })
   @Put(':statusId/move')
   async move(
-    @Param('id') projectId: number,
-    @Param('statusId') statusId: number,
+    @Param() params: ParamsStatusDto,
     @Body() dto: MoveStatusDto,
     @GetUser() user: User
   ): Promise<Status[]> {
-    return this.statusService.moveStatus(projectId, statusId, dto, user);
+    return this.statusService.moveStatus(params.projectId, params.statusId, dto, user);
   }
 }

@@ -8,5 +8,5 @@ export class MoveStatusDto {
   @Type(() => Number)
   @IsInt({ message: 'Должно быть целым числом' })
   @Min(1, { message: 'Должно быть больше 0' })
-  order: number;
+  readonly order: number;
 }

@@ -57,17 +57,24 @@ export class TasksService {
   ): Promise<Task> {
     const task = await this.getTaskById(projectId, statusId, taskId, user);
     Object.assign(task, dto);
-    return await this.tasksRepository.save(task);
+    try {
+      return await this.tasksRepository.save(task);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при обновлении задачи');
+    }
   }
 
   async deleteTask(
     projectId: number, statusId: number, taskId: number, user: User
   ): Promise<void> {
     const task = await this.getTaskById(projectId, statusId, taskId, user);
-    await this.tasksRepository.remove(task);
-
-    const tasks = await this.getTasks(projectId, statusId, user);
-    await this.updateTaskOrder(tasks);
+    try {
+      await this.tasksRepository.remove(task);
+      const tasks = await this.getTasks(projectId, statusId, user);
+      await this.updateTaskOrder(tasks);
+    } catch (error) {
+      throw new InternalServerErrorException('Ошибка при удалении задачи');
+    }
   }
 
   async moveTask(

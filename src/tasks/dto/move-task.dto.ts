@@ -9,12 +9,12 @@ export class MoveTaskDto {
   @IsInt({ message: 'Должно быть целым числом' })
   @Min(1, { message: 'Должно быть больше 0' })
   @IsOptional()
-  order?: number;
+  readonly order?: number;
 
   @ApiProperty({ example: '1', description: 'Номер статуса задачи' })
   @Type(() => Number)
   @IsInt({ message: 'Должно быть целым числом' })
   @Min(1, { message: 'Должно быть больше 0' })
   @IsOptional()
-  statusId?: number;
+  readonly statusId?: number;
 }
