@@ -1,7 +1,7 @@
 ## «ToDo list»
 
 ### Описание проекта:
-Приложение для планирования задач. Авторизованные пользователи могут создавать проекты, редактировать их и удалять. Каждый проект имеет свои статусы задач (столбцы), их можно добавлять, редактировать, удалять и менять их порядок. К статусам прикрепляются задачи, их также можно добавлять, редактировать, удалять, менять порядок и перемещать между статусами.Авторизация пользователей по JWT-токену. Пользователи могут работать только с собственными записями.
+Приложение для планирования задач. Авторизованные пользователи могут создавать проекты, редактировать их и удалять. Каждый проект имеет свои статусы задач (столбцы), их можно добавлять, редактировать, удалять и менять их порядок. К статусам прикрепляются задачи, их также можно добавлять, редактировать, удалять, менять порядок и перемещать между статусами. Авторизация пользователей по JWT-токену. Пользователи могут работать только с собственными записями.
 
 ### Стек технологий:
 <img src="https://img.shields.io/badge/typescript-FFFFFF?style=for-the-badge&logo=typescript&logoColor=3178C6"/><img src="https://img.shields.io/badge/node.js-FFFFFF?style=for-the-badge&logo=node.js&logoColor=5FA04E"/><img src="https://img.shields.io/badge/nestjs-FFFFFF?style=for-the-badge&logo=nestjs&logoColor=E0234E"/><img src="https://img.shields.io/badge/typeorm-FFFFFF?style=for-the-badge&logo=typeorm&logoColor=FE0803"/><img src="https://img.shields.io/badge/PostgreSQL-FFFFFF?style=for-the-badge&logo=PostgreSQL&logoColor=4169E1"/><img src="https://img.shields.io/badge/swagger-FFFFFF?style=for-the-badge&logo=swagger&logoColor=85EA2D"/>
