@@ -3,7 +3,7 @@ import { User } from '../users/users.entity';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Status } from '../statuses/statuses.entity';
 
-@Entity()
+@Entity('projects')
 export class Project {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
@@ -11,11 +11,11 @@ export class Project {
   id!: number;
 
   @ApiProperty({ example: 'Project title', description: 'Название проекта' })
-  @Column('varchar', { nullable: false, length: 50 })
+  @Column('varchar', { length: 50 })
   title!: string;
 
   @ApiProperty({ example: 'Project description', description: 'Описание проекта' })
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { nullable: true, length: 255 })
   description?: string;
 
   @ApiProperty({ example: 'DateTime', description: 'Дата и время создания' })

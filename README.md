@@ -15,8 +15,7 @@ $ git clone https://github.com/Excellent-84/todo_list.git
 $ cd todo_list
 ```
 
-##### Создать файлы .env, .development.env, .production.env
-##### и указать необходимые токены по примеру .env.example:
+##### Создать файлы .env, .development.env, .production.env и указать необходимые токены по примеру .env.example:
 
 ```bash
 $ touch .env .development.env .production.env

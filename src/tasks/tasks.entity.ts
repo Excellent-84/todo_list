@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Status } from "../statuses/statuses.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity('tasks')
 export class Task {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
@@ -10,7 +10,7 @@ export class Task {
   id!: number;
 
   @ApiProperty({ example: 'Task title', description: 'Название задачи' })
-  @Column('varchar', { nullable: true, length: 50 })
+  @Column('varchar', { length: 50 })
   title!: string;
 
   @ApiProperty({ example: 'Task description', description: 'Описание задачи' })

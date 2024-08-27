@@ -3,7 +3,7 @@ import { Project } from '../projects/projects.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
-@Entity()
+@Entity('users')
 export class User {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
@@ -11,16 +11,16 @@ export class User {
   id!: number;
 
   @ApiProperty({ example: 'john@example.com', description: 'Почтовый адрес' })
-  @Column('varchar', { unique: true, nullable: false, length: 50 })
+  @Column('varchar', { unique: true, length: 50 })
   email!: string;
 
   @ApiProperty({ example: '12345678', description: 'Пароль' })
   @Exclude()
-  @Column('varchar', { length: 255, nullable: false })
+  @Column('varchar', { length: 255 })
   password!: string;
 
   @ApiProperty({ example: 'John', description: 'Имя пользователя' })
-  @Column('varchar', { length: 100, nullable: false })
+  @Column('varchar', { length: 100 })
   name?: string;
 
   @OneToMany(() => Project, (project) => project.user)
