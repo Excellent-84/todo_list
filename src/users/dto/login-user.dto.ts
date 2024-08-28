@@ -1,6 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsString, Length } from "class-validator";
 
+export class TokenResponse {
+  @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5c...', description: 'Токен' })
+  token: string;
+}
+
 export class LoginUserDto {
 
   @ApiProperty({ example: 'john@example.com', description: 'Почтовый адрес' })

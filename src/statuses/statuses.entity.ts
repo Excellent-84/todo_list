@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { Project } from '../projects/projects.entity';
 import { Task } from '../tasks/tasks.entity';
 
-@Entity('ststuses')
+@Entity('statuses')
 export class Status {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
